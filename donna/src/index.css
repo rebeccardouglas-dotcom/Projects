@@ -1,0 +1,40 @@
+@import "@heroui/react/styles";
+
+:root {
+  --donna-violet: #7C3AED;
+  --donna-gold: #F59E0B;
+  --donna-dark: #080813;
+  --donna-surface: #0F0F23;
+  --donna-card: #14142B;
+  --donna-border: #1E1B4B;
+}
+
+body {
+  margin: 0;
+  background-color: var(--donna-dark);
+  color: #F1F5F9;
+  font-family: system-ui, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+.donna-gradient {
+  background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 50%, #1E1B4B 100%);
+}
+
+.chat-bubble-donna {
+  background: linear-gradient(135deg, #1E1B4B, #14142B);
+  border-left: 3px solid #7C3AED;
+}
+
+.chat-bubble-user {
+  background: #1a1a2e;
+  border-left: 3px solid #F59E0B;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--donna-dark); }
+::-webkit-scrollbar-thumb { background: var(--donna-border); border-radius: 2px; }
