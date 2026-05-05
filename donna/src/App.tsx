@@ -112,7 +112,7 @@ export default function App() {
               className="hidden lg:flex flex-col shrink-0 border-l"
               style={{ width: "380px", borderColor: "#1E1B4B" }}
             >
-              <DonnaChat sectionId={active.id} opener={active.donnaOpener} />
+              <DonnaChat section={active} />
             </div>
           </div>
 
@@ -121,7 +121,7 @@ export default function App() {
             className="lg:hidden border-t shrink-0"
             style={{ borderColor: "#1E1B4B", height: "42vh" }}
           >
-            <DonnaChat sectionId={active.id} opener={active.donnaOpener} />
+            <DonnaChat section={active} />
           </div>
         </div>
       </div>
