@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rebecca · Built with Claude</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080810;
+      --surface:   #0f0f1a;
+      --border:    rgba(255,255,255,0.07);
+      --amber:     #d4942a;
+      --amber-dim: rgba(212,148,42,0.12);
+      --cream:     #e8e2d5;
+      --muted:     #6b6b82;
+      --text:      #c8c4be;
+      --white:     #f0ece6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ───────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── Layout ──────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ──────────────────────────────────── */
+    header {
+      padding: 5rem 0 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-eyebrow::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--amber);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1.05;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .header-desc {
+      max-width: 520px;
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .meta-item span {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    /* ── Section title ───────────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 3.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+
+    .section-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    /* ── Project grid ────────────────────────────── */
+    .projects {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 700px) {
+      .projects { grid-template-columns: 1fr; }
+    }
+
+    .project-card {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      transition: background 0.3s ease;
+      cursor: default;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+
+    .project-card:nth-child(even) {
+      border-right: none;
+    }
+
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--amber-dim);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .project-card:hover::after { opacity: 1; }
+    .project-card:hover .project-num { color: var(--amber); }
+    .project-card:hover .project-arrow { opacity: 1; transform: translate(2px, -2px); }
+
+    .project-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      transition: color 0.3s;
+    }
+
+    .project-category {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(212,148,42,0.2);
+      border-radius: 2px;
+      padding: 0.2em 0.6em;
+      margin-bottom: 1rem;
+    }
+
+    .project-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: 1.45rem;
+      color: var(--white);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .project-arrow {
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      color: var(--amber);
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .project-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.2em 0.55em;
+    }
+
+    /* ── Featured card (spans full width) ───────── */
+    .project-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      border-right: none;
+      padding: 3rem 2rem;
+    }
+
+    .project-card.featured .project-body {
+      /* right column */
+    }
+
+    .project-card.featured .project-visual {
+      background: linear-gradient(135deg, rgba(212,148,42,0.06) 0%, transparent 60%);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .featured-visual-label {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 2.5rem;
+      color: rgba(212,148,42,0.15);
+      text-align: center;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .visual-lines {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .visual-lines::before,
+    .visual-lines::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,148,42,0.2), transparent);
+    }
+    .visual-lines::before { top: 33%; }
+    .visual-lines::after { top: 66%; }
+
+    @media (max-width: 700px) {
+      .project-card.featured {
+        grid-template-columns: 1fr;
+      }
+      .project-card.featured .project-visual {
+        min-height: 120px;
+      }
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    footer {
+      padding: 3rem 0 4rem;
+      border-top: 1px solid var(--border);
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+      gap: 1.5rem;
+    }
+
+    .footer-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .footer-note a {
+      color: var(--amber);
+      text-decoration: none;
+    }
+
+    .footer-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-badge::before {
+      content: '◆';
+      color: var(--amber);
+      font-size: 0.5rem;
+    }
+
+    /* ── Animate in ──────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header, .section-header, .project-card {
+      animation: fadeUp 0.55s ease both;
+    }
+
+    .project-card:nth-child(1) { animation-delay: 0.05s; }
+    .project-card:nth-child(2) { animation-delay: 0.10s; }
+    .project-card:nth-child(3) { animation-delay: 0.15s; }
+    .project-card:nth-child(4) { animation-delay: 0.20s; }
+    .project-card:nth-child(5) { animation-delay: 0.25s; }
+    .project-card:nth-child(6) { animation-delay: 0.30s; }
+
+    /* ── Scrollbar ───────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="header-eyebrow">Built with Claude</div>
+    <h1>Projects by<br /><em>Rebecca</em></h1>
+    <p class="header-desc">
+      A collection of interactive tools, dashboards, and research artifacts
+      built through conversation — spanning product engineering, financial
+      analysis, and design systems.
+    </p>
+    <div class="header-meta">
+      <div class="meta-item">Projects <span>8</span></div>
+      <div class="meta-item">Built with <span>Claude AI</span></div>
+      <div class="meta-item">Last updated <span>May 2026</span></div>
+    </div>
+  </header>
+
+  <!-- ── Projects ── -->
+  <div class="section-header">
+    <div class="section-title">Selected Work</div>
+    <div class="section-count">08 projects</div>
+  </div>
+
+  <div class="projects">
+
+    <!-- 01 ExpatTax Advisor — featured -->
+    <a class="project-card featured" href="https://claude.ai/share/df99871f-d299-4c26-822a-a34c1ec95d45" target="_blank" rel="noopener">
+      <div class="project-body">
+        <div class="project-num">01 / 09</div>
+        <div class="project-category">Tax &amp; Legal</div>
+        <div class="project-title">
+          ExpatTax Advisor
+          <span class="project-arrow">↗</span>
+        </div>
+        <p class="project-desc">
+          An AI-powered planning agent for US citizens relocating to the EU. Covers
+          FEIE, FTC, FBAR, FATCA, and exit tax obligations alongside eight EU special
+          tax regimes — Portugal IFICI, Italy flat tax, Greece non-dom, Cyprus,
+          Malta GRP, Spain Beckham Law, Ireland remittance basis, and Estonia OÜ.
+          Includes a sortable country comparison tool and a 12-month personalized
+          action planner.
+        </p>
+        <div class="project-tags">
+          <span class="tag">React</span>
+          <span class="tag">Claude API</span>
+          <span class="tag">Web Search</span>
+          <span class="tag">3-Tab App</span>
+          <span class="tag">IRC References</span>
+        </div>
+      </div>
+      <div class="project-visual">
+        <div class="visual-lines"></div>
+        <div class="featured-visual-label">Expat<br />Tax<br />Advisor</div>
+      </div>
+    </a>
+
+    <!-- 02 Donna Exec Coach -->
+    <a class="project-card" href="https://claude.ai/share/d3a191b8-c8db-4496-9952-e6c6d4c723a3" target="_blank" rel="noopener">
+      <div class="project-num">02 / 09</div>
+      <div class="project-category">Leadership</div>
+      <div class="project-title">
+        Donna — Exec Coach
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        A bespoke AI-powered executive coaching application. Donna guides
+        leaders through high-stakes communication, executive presence,
+        presentation review, and strategic decision-making — with a
+        structured coaching methodology and persistent session context.
+      </p>
+      <div class="project-tags">
+        <span class="tag">React</span>
+        <span class="tag">Claude API</span>
+        <span class="tag">Executive Coaching</span>
+        <span class="tag">Leadership</span>
+      </div>
+    </a>
+
+    <!-- 03 Samantha PM Coach -->
+    <a class="project-card" href="https://claude.ai/share/e6c9de83-f234-4129-b989-ed3a7b1dfc2f" target="_blank" rel="noopener">
+      <div class="project-num">03 / 09</div>
+      <div class="project-category">Product</div>
+      <div class="project-title">
+        Samantha — PM Coach
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        An AI-powered product management coaching partner for engineering
+        leaders. Five focus modes — Discovery, Roadmap, Stakeholders,
+        Eng Handoff, OKRs &amp; Retros — producing copy-paste-ready
+        PRD sections, OKR drafts, prioritization matrices, and ADRs
+        formatted for Jira, Linear, and Notion.
+      </p>
+      <div class="project-tags">
+        <span class="tag">React</span>
+        <span class="tag">Claude API</span>
+        <span class="tag">PM Coaching</span>
+        <span class="tag">Jira · Linear · Notion</span>
+      </div>
+    </a>
+
+    <!-- 04 AI Engineering Partner -->
+    <a class="project-card" href="https://claude.ai/share/7c3028a8-dafe-4d02-8ac3-fcbdebf18f2d" target="_blank" rel="noopener">
+      <div class="project-num">04 / 09</div>
+      <div class="project-category">Engineering</div>
+      <div class="project-title">
+        AI Engineering Partner
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        A proactive AI development manager and staff-level engineering partner.
+        Leads with goal restatement and risk surfacing before every task,
+        produces structured artifacts in markdown, and translates technical
+        decisions into business impact — optimized for delivery, quality,
+        and developer experience.
+      </p>
+      <div class="project-tags">
+        <span class="tag">React</span>
+        <span class="tag">Claude API</span>
+        <span class="tag">Eng Leadership</span>
+        <span class="tag">Dev Experience</span>
+      </div>
+    </a>
+
+    <!-- 05 PM Coach -->
+    <a class="project-card" href="https://claude.ai/share/72e71200-7c49-4235-ab01-a792135fe107" target="_blank" rel="noopener">
+      <div class="project-num">05 / 08</div>
+      <div class="project-category">Product</div>
+      <div class="project-title">
+        PM Coach
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        A conversational AI coaching tool for product managers navigating
+        roadmap decisions, stakeholder alignment, and discovery work.
+        Produces structured, copy-paste-ready outputs grounded in
+        real PM methodology and delivery context.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Claude API</span>
+        <span class="tag">PM Methodology</span>
+        <span class="tag">Roadmapping</span>
+        <span class="tag">Stakeholder Mgmt</span>
+      </div>
+    </a>
+
+    <!-- 06 PM Prioritization Training -->
+    <a class="project-card" href="https://claude.ai/public/artifacts/f364d14e-6a93-4930-a22d-6a605190e906" target="_blank" rel="noopener">
+      <div class="project-num">06 / 08</div>
+      <div class="project-category">Education</div>
+      <div class="project-title">
+        PM Prioritization Training
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        An interactive training module for product managers learning
+        prioritization frameworks. Covers RICE, MoSCoW, opportunity
+        scoring, and weighted decision matrices through guided exercises
+        with real-world scenario practice.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Interactive</span>
+        <span class="tag">RICE · MoSCoW</span>
+        <span class="tag">PM Training</span>
+        <span class="tag">Decision Frameworks</span>
+      </div>
+    </a>
+
+    <!-- 07 Susan SMB Payroll Persona -->
+    <a class="project-card" href="https://claude.ai/share/9b5275b1-5d70-421f-9ae2-7b2c3d1c427b" target="_blank" rel="noopener">
+      <div class="project-num">07 / 08</div>
+      <div class="project-category">UX Research</div>
+      <div class="project-title">
+        Susan — SMB Payroll Persona
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        Synthetic SMB user persona for payroll platform research. Synthesized
+        from G2, TrustRadius, SHRM, and APA sources — delivered as a polished
+        PPTX slide and a 14-citation supplemental PDF. Covers Goals,
+        Pain Points, Motivators, and a 6-step end-to-end payroll process flow.
+      </p>
+      <div class="project-tags">
+        <span class="tag">PPTX</span>
+        <span class="tag">PDF</span>
+        <span class="tag">User Research</span>
+        <span class="tag">Payroll Platforms</span>
+      </div>
+    </a>
+
+    <!-- 08 Payroll Competitive Analysis -->
+    <a class="project-card" href="https://claude.ai/share/769b3b5a-6f54-4632-9b30-6e689ea28a27" target="_blank" rel="noopener">
+      <div class="project-num">08 / 08</div>
+      <div class="project-category">Competitive Intel</div>
+      <div class="project-title">
+        Payroll Competitive Analysis
+        <span class="project-arrow">↗</span>
+      </div>
+      <p class="project-desc">
+        A reusable Claude skill that auto-searches, ranks, and reports on
+        payroll feature launches from ADP, Workday, SAP, and UKG across a
+        rolling 12-month window. Boosts Agentic AI features in ranking.
+        Outputs a dated PDF report each run — no paywalled sources included.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Claude Skill</span>
+        <span class="tag">Web Search</span>
+        <span class="tag">PDF Output</span>
+        <span class="tag">ADP · Workday · SAP · UKG</span>
+      </div>
+    </a>
+
+  </div><!-- /projects -->
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-note">
+      All projects built in conversation with <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a> by Anthropic.
+    </div>
+    <div class="footer-badge">Made with Claude</div>
+  </footer>
+
+</div><!-- /container -->
+
+</body>
+</html>
