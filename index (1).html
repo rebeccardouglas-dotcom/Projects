@@ -166,7 +166,7 @@
       border-bottom: 1px solid var(--border);
       position: relative;
       transition: background 0.3s ease;
-      cursor: default;
+      cursor: pointer;
       text-decoration: none;
       display: block;
       color: inherit;
@@ -384,6 +384,124 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── Project modal ───────────────────────────── */
+    #project-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    #project-modal.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 8, 16, 0.85);
+      backdrop-filter: blur(4px);
+    }
+
+    #modal-content {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      max-width: 560px;
+      width: calc(100% - 2rem);
+      padding: 2.5rem;
+      margin: 1rem;
+      transform: translateY(12px);
+      transition: transform 0.25s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    #project-modal.open #modal-content {
+      transform: translateY(0);
+    }
+
+    #modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+    }
+
+    #modal-close:hover { color: var(--white); }
+
+    #modal-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+
+    #modal-category {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(212,148,42,0.2);
+      border-radius: 2px;
+      padding: 0.2em 0.6em;
+      margin-bottom: 1rem;
+    }
+
+    #modal-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: 1.6rem;
+      color: var(--white);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    #modal-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-btn {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      border: 1px solid rgba(212,148,42,0.35);
+      border-radius: 2px;
+      padding: 0.55em 1.1em;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .modal-btn:hover {
+      background: var(--amber-dim);
+      border-color: rgba(212,148,42,0.6);
+    }
   </style>
 </head>
 <body>
@@ -415,7 +533,7 @@
   <div class="projects">
 
     <!-- 01 ExpatTax Advisor — featured -->
-    <a class="project-card featured" href="https://claude.ai/share/df99871f-d299-4c26-822a-a34c1ec95d45" target="_blank" rel="noopener">
+    <a class="project-card featured" href="https://claude.ai/share/df99871f-d299-4c26-822a-a34c1ec95d45" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-body">
         <div class="project-num">01 / 09</div>
         <div class="project-category">Tax &amp; Legal</div>
@@ -446,7 +564,7 @@
     </a>
 
     <!-- 02 Donna Exec Coach -->
-    <a class="project-card" href="https://claude.ai/share/d3a191b8-c8db-4496-9952-e6c6d4c723a3" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/share/d3a191b8-c8db-4496-9952-e6c6d4c723a3" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">02 / 09</div>
       <div class="project-category">Leadership</div>
       <div class="project-title">
@@ -468,7 +586,7 @@
     </a>
 
     <!-- 03 Samantha PM Coach -->
-    <a class="project-card" href="https://claude.ai/share/e6c9de83-f234-4129-b989-ed3a7b1dfc2f" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/share/e6c9de83-f234-4129-b989-ed3a7b1dfc2f" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">03 / 09</div>
       <div class="project-category">Product</div>
       <div class="project-title">
@@ -491,7 +609,7 @@
     </a>
 
     <!-- 04 AI Engineering Partner -->
-    <a class="project-card" href="https://claude.ai/share/7c3028a8-dafe-4d02-8ac3-fcbdebf18f2d" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/share/7c3028a8-dafe-4d02-8ac3-fcbdebf18f2d" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">04 / 09</div>
       <div class="project-category">Engineering</div>
       <div class="project-title">
@@ -514,7 +632,7 @@
     </a>
 
     <!-- 05 PM Coach -->
-    <a class="project-card" href="https://claude.ai/share/72e71200-7c49-4235-ab01-a792135fe107" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/share/72e71200-7c49-4235-ab01-a792135fe107" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">05 / 08</div>
       <div class="project-category">Product</div>
       <div class="project-title">
@@ -536,7 +654,7 @@
     </a>
 
     <!-- 06 PM Prioritization Training -->
-    <a class="project-card" href="https://claude.ai/public/artifacts/f364d14e-6a93-4930-a22d-6a605190e906" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/public/artifacts/f364d14e-6a93-4930-a22d-6a605190e906" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">06 / 08</div>
       <div class="project-category">Education</div>
       <div class="project-title">
@@ -558,7 +676,7 @@
     </a>
 
     <!-- 07 Susan SMB Payroll Persona -->
-    <a class="project-card" href="https://claude.ai/share/9b5275b1-5d70-421f-9ae2-7b2c3d1c427b" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/share/9b5275b1-5d70-421f-9ae2-7b2c3d1c427b" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">07 / 08</div>
       <div class="project-category">UX Research</div>
       <div class="project-title">
@@ -580,7 +698,7 @@
     </a>
 
     <!-- 08 Payroll Competitive Analysis -->
-    <a class="project-card" href="https://claude.ai/share/769b3b5a-6f54-4632-9b30-6e689ea28a27" target="_blank" rel="noopener">
+    <a class="project-card" href="https://claude.ai/share/769b3b5a-6f54-4632-9b30-6e689ea28a27" target="_blank" rel="noopener" onclick="openProject(event, this)">
       <div class="project-num">08 / 08</div>
       <div class="project-category">Competitive Intel</div>
       <div class="project-title">
@@ -612,6 +730,56 @@
   </footer>
 
 </div><!-- /container -->
+
+<!-- ── Project detail modal ── -->
+<div id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div id="modal-backdrop" onclick="closeProject()"></div>
+  <div id="modal-content">
+    <button id="modal-close" onclick="closeProject()" aria-label="Close">&times;</button>
+    <div id="modal-num"></div>
+    <div id="modal-category"></div>
+    <div id="modal-title"></div>
+    <p id="modal-desc"></p>
+    <div id="modal-tags" class="project-tags"></div>
+    <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn">View Project ↗</a>
+  </div>
+</div>
+
+<script>
+  function openProject(event, card) {
+    event.preventDefault();
+
+    const num = card.querySelector('.project-num')?.textContent?.trim() || '';
+    const category = card.querySelector('.project-category')?.textContent?.trim() || '';
+
+    const titleEl = card.querySelector('.project-title');
+    const titleClone = titleEl.cloneNode(true);
+    titleClone.querySelector('.project-arrow')?.remove();
+    const title = titleClone.textContent.trim();
+
+    const desc = card.querySelector('.project-desc')?.textContent?.trim() || '';
+    const tagsHTML = card.querySelector('.project-tags')?.innerHTML || '';
+
+    document.getElementById('modal-num').textContent = num;
+    document.getElementById('modal-category').textContent = category;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-desc').textContent = desc;
+    document.getElementById('modal-tags').innerHTML = tagsHTML;
+    document.getElementById('modal-link').href = card.href;
+
+    document.getElementById('project-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProject() {
+    document.getElementById('project-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeProject();
+  });
+</script>
 
 </body>
 </html>
