@@ -385,109 +385,169 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* ── Project modal ───────────────────────────── */
-    #project-modal {
+    /* ── Project viewer (full-screen) ───────────── */
+    #project-viewer {
       position: fixed;
       inset: 0;
       z-index: 100;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      background: var(--bg);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.2s ease;
     }
 
-    #project-modal.open {
+    #project-viewer.open {
       opacity: 1;
       pointer-events: all;
     }
 
-    #modal-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(8, 8, 16, 0.85);
-      backdrop-filter: blur(4px);
-    }
-
-    #modal-content {
-      position: relative;
+    #viewer-chrome {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1.25rem;
+      height: 52px;
+      flex-shrink: 0;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      max-width: 560px;
-      width: calc(100% - 2rem);
-      padding: 2.5rem;
-      margin: 1rem;
-      transform: translateY(12px);
-      transition: transform 0.25s ease;
-      max-height: 90vh;
-      overflow-y: auto;
+      border-bottom: 1px solid var(--border);
     }
 
-    #project-modal.open #modal-content {
-      transform: translateY(0);
+    #viewer-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      overflow: hidden;
     }
 
-    #modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 1.25rem;
-      cursor: pointer;
-      line-height: 1;
-      padding: 0.25rem 0.5rem;
-    }
-
-    #modal-close:hover { color: var(--white); }
-
-    #modal-num {
+    #viewer-category {
       font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      margin-bottom: 1.2rem;
-    }
-
-    #modal-category {
-      display: inline-block;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--amber);
       background: var(--amber-dim);
       border: 1px solid rgba(212,148,42,0.2);
       border-radius: 2px;
-      padding: 0.2em 0.6em;
-      margin-bottom: 1rem;
+      padding: 0.15em 0.5em;
+      flex-shrink: 0;
     }
 
-    #modal-title {
+    #viewer-title {
       font-family: 'Fraunces', serif;
-      font-weight: 400;
-      font-size: 1.6rem;
+      font-size: 0.95rem;
       color: var(--white);
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      margin-bottom: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    #modal-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.75;
-      margin-bottom: 1.5rem;
+    #viewer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
     }
 
-    .modal-btn {
-      display: inline-block;
-      margin-top: 0.5rem;
+    #viewer-open {
       font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      text-decoration: none;
+      border: 1px solid rgba(212,148,42,0.3);
+      border-radius: 2px;
+      padding: 0.3em 0.7em;
+      transition: background 0.2s;
+    }
+
+    #viewer-open:hover { background: var(--amber-dim); }
+
+    #viewer-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0.25rem 0.4rem;
+      line-height: 1;
+    }
+
+    #viewer-close:hover { color: var(--white); }
+
+    #viewer-frame-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #viewer-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+
+    #viewer-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      gap: 1rem;
+    }
+
+    #viewer-loading.hidden { display: none; }
+
+    .loader-ring {
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--border);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #viewer-loading p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    #viewer-blocked {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      gap: 1.25rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    #viewer-blocked.visible { display: flex; }
+
+    #viewer-blocked p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    #viewer-blocked a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--amber);
@@ -495,13 +555,10 @@
       border-radius: 2px;
       padding: 0.55em 1.1em;
       text-decoration: none;
-      transition: background 0.2s, border-color 0.2s;
+      transition: background 0.2s;
     }
 
-    .modal-btn:hover {
-      background: var(--amber-dim);
-      border-color: rgba(212,148,42,0.6);
-    }
+    #viewer-blocked a:hover { background: var(--amber-dim); }
   </style>
 </head>
 <body>
@@ -731,49 +788,97 @@
 
 </div><!-- /container -->
 
-<!-- ── Project detail modal ── -->
-<div id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div id="modal-backdrop" onclick="closeProject()"></div>
-  <div id="modal-content">
-    <button id="modal-close" onclick="closeProject()" aria-label="Close">&times;</button>
-    <div id="modal-num"></div>
-    <div id="modal-category"></div>
-    <div id="modal-title"></div>
-    <p id="modal-desc"></p>
-    <div id="modal-tags" class="project-tags"></div>
-    <a id="modal-link" href="#" target="_blank" rel="noopener" class="modal-btn">View Project ↗</a>
+<!-- ── Project viewer ── -->
+<div id="project-viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-title">
+  <div id="viewer-chrome">
+    <div id="viewer-info">
+      <span id="viewer-category"></span>
+      <span id="viewer-title"></span>
+    </div>
+    <div id="viewer-actions">
+      <a id="viewer-open" href="#" target="_blank" rel="noopener">Open ↗</a>
+      <button id="viewer-close" onclick="closeProject()" aria-label="Close">&times;</button>
+    </div>
+  </div>
+  <div id="viewer-frame-wrap">
+    <div id="viewer-loading">
+      <div class="loader-ring"></div>
+      <p>Loading preview…</p>
+    </div>
+    <div id="viewer-blocked">
+      <p>This content can't be embedded here — the hosting site restricts iframe previews. Use the button below to open it directly.</p>
+      <a id="viewer-blocked-link" href="#" target="_blank" rel="noopener">Open Project ↗</a>
+    </div>
+    <iframe id="viewer-frame" title="Project preview" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
   </div>
 </div>
 
 <script>
+  var _viewerTimeout = null;
+
   function openProject(event, card) {
     event.preventDefault();
 
-    const num = card.querySelector('.project-num')?.textContent?.trim() || '';
-    const category = card.querySelector('.project-category')?.textContent?.trim() || '';
+    var category = (card.querySelector('.project-category') || {}).textContent || '';
+    category = category.trim();
 
-    const titleEl = card.querySelector('.project-title');
-    const titleClone = titleEl.cloneNode(true);
-    titleClone.querySelector('.project-arrow')?.remove();
-    const title = titleClone.textContent.trim();
+    var titleEl = card.querySelector('.project-title');
+    var titleClone = titleEl.cloneNode(true);
+    var arrow = titleClone.querySelector('.project-arrow');
+    if (arrow) arrow.remove();
+    var title = titleClone.textContent.trim();
 
-    const desc = card.querySelector('.project-desc')?.textContent?.trim() || '';
-    const tagsHTML = card.querySelector('.project-tags')?.innerHTML || '';
+    var url = card.href;
 
-    document.getElementById('modal-num').textContent = num;
-    document.getElementById('modal-category').textContent = category;
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-desc').textContent = desc;
-    document.getElementById('modal-tags').innerHTML = tagsHTML;
-    document.getElementById('modal-link').href = card.href;
+    document.getElementById('viewer-category').textContent = category;
+    document.getElementById('viewer-title').textContent = title;
+    document.getElementById('viewer-open').href = url;
+    document.getElementById('viewer-blocked-link').href = url;
 
-    document.getElementById('project-modal').classList.add('open');
+    document.getElementById('viewer-loading').classList.remove('hidden');
+    document.getElementById('viewer-blocked').classList.remove('visible');
+
+    var frame = document.getElementById('viewer-frame');
+    frame.src = '';
+
+    clearTimeout(_viewerTimeout);
+
+    frame.onload = function() {
+      document.getElementById('viewer-loading').classList.add('hidden');
+      try {
+        var doc = frame.contentDocument || frame.contentWindow.document;
+        if (!doc || doc.body === null || doc.body.innerHTML.trim() === '') {
+          showBlocked();
+        }
+      } catch (e) {
+        /* cross-origin load — content is there but we can't inspect it; hide loader */
+        document.getElementById('viewer-loading').classList.add('hidden');
+      }
+    };
+
+    _viewerTimeout = setTimeout(function() {
+      if (!document.getElementById('viewer-loading').classList.contains('hidden')) {
+        showBlocked();
+      }
+    }, 10000);
+
+    frame.src = url;
+
+    document.getElementById('project-viewer').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
+  function showBlocked() {
+    clearTimeout(_viewerTimeout);
+    document.getElementById('viewer-loading').classList.add('hidden');
+    document.getElementById('viewer-blocked').classList.add('visible');
+  }
+
   function closeProject() {
-    document.getElementById('project-modal').classList.remove('open');
+    clearTimeout(_viewerTimeout);
+    document.getElementById('project-viewer').classList.remove('open');
     document.body.style.overflow = '';
+    document.getElementById('viewer-frame').src = '';
   }
 
   document.addEventListener('keydown', function(e) {
