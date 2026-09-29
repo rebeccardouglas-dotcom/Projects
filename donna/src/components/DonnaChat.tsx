@@ -85,13 +85,8 @@ export default function DonnaChat({ section }: Props) {
   const abortRef = useRef<AbortController | null>(null);
   const suggestions = SUGGESTED_PROMPTS[section.id] ?? [];
 
-  useEffect(() => {
-    abortRef.current?.abort();
-    setMessages([{ role: "donna", text: section.donnaOpener }]);
-    setInput("");
-    setIsStreaming(false);
-    setStreamingText("");
-  }, [section.id, section.donnaOpener]);
+  // State resets per section via `key={section.id}` in App; just cancel any in-flight stream.
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -120,11 +115,17 @@ export default function DonnaChat({ section }: Props) {
 
       try {
         let accumulated = "";
-        const stream = client.messages.stream(
+        const stream = client.beta.messages.stream(
           {
-            model: "claude-opus-4-7",
-            max_tokens: 512,
+            model: "claude-opus-5-5",
+            // Thinking tokens count toward max_tokens; leave headroom so replies aren't cut off.
+            max_tokens: 2048,
             thinking: { type: "adaptive" },
+            // Conversational coaching doesn't need deep reasoning.
+            output_config: { effort: "low" },
+            // On a safety-classifier refusal, re-run on a fallback model in the same call.
+            betas: ["server-side-fallback-2026-07-01"],
+            fallbacks: "default",
             system: buildSystemPrompt(section),
             messages: apiMessages,
           },
